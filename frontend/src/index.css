@@ -1,0 +1,38 @@
+
+form {
+    width: 300px;
+    margin: 20px 0;
+    display: flex;
+    flex-flow: column;
+}
+
+label {
+    width: auto;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin: 5px 0;
+}
+
+input {
+    width: 75%;
+}
+
+input[type="submit"] {
+    align-self: flex-end;
+    width: auto;
+}
+
+/* Notification */
+.notification {
+    margin: 1rem;
+    padding: 1rem;
+}
+
+.success {
+    background-color: lightgreen;
+}
+
+.error {
+    background-color: indianred;
+}
