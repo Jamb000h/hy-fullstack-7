@@ -5,6 +5,9 @@ import Notification from './components/Notification'
 import Togglable from './components/Togglable'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import { connect } from 'react-redux'
+
+import { notify } from './reducers/notificationReducer'
 
 import './index.css'
 
@@ -20,10 +23,6 @@ class App extends React.Component {
         title: '',
         author: '',
         url: ''
-      },
-      notification: {
-        type: '',
-        text: ''
       }
     }
   }
@@ -54,20 +53,12 @@ class App extends React.Component {
   
       this.setState({ username: '', password: '', user})
     } catch(exception) {
-      this.setState({
-        notification: {
-          type: "error",
-          text: "wrong username or password"
-        }
-      })
-      setTimeout(() => {
-        this.setState({
-          notification: {
-            type: "",
-            text: ""
-          }
-        })
-      }, 5000)
+      this.props.notify(
+        {
+          text: `wrong username or password`,
+          type: 'error'
+        }, 5
+      )
     }
   }
 
@@ -98,29 +89,20 @@ class App extends React.Component {
       // Show success message
       this.setState({
         blogs: this.state.blogs.filter( blog => blog.id !== id),
-        notification: {
-          type: "success",
-          text: `the blog has been deleted`
-        }
       })
+      this.props.notify(
+        {
+          text: `the blog has been deleted`,
+          type: 'success'
+        }, 5
+      )
     } catch(exception) {
-      // Show error message
-      this.setState({
-        notification: {
-          type: "error",
-          text: "There was an error with deleting the blog"
-        }
-      })
-    } finally {
-      // Hide message in 5 seconds
-      setTimeout(() => {
-        this.setState({
-          notification: {
-            type: "",
-            text: ""
-          }
-        })
-      }, 5000)
+      this.props.notify(
+        {
+          text: `There was an error with deleting the blog`,
+          type: 'error'
+        }, 5
+      )
     }
   }
 
@@ -144,33 +126,23 @@ class App extends React.Component {
         blogs: this.state.blogs.map( blog => blog.id === updatedBlog.id ?
           {...blog, likes: updatedBlog.likes} :
           blog
-        ),
-        notification: {
-          type: "success",
-          text: `your like for '${updatedBlog.title}' has been registered. Votes: ${updatedBlog.likes}`
-        }
+        )
       })
+      this.props.notify(
+        {
+          text: `your like for '${updatedBlog.title}' has been registered. Votes: ${updatedBlog.likes}`,
+          type: 'success'
+        }, 5
+      )
     } catch(exception) {
       // Show error message
-      this.setState({
-        notification: {
-          type: "error",
-          text: "There was an error with adding your like"
-        }
-      })
-    } finally {
-      // Hide message in 5 seconds
-      setTimeout(() => {
-        this.setState({
-          notification: {
-            type: "",
-            text: ""
-          }
-        })
-      }, 5000)
+      this.props.notify(
+        {
+          text: `There was an error with adding your like`,
+          type: 'error'
+        }, 5
+      )
     }
-
-
   }
 
   handleBlogFormSubmit = async (event) => {
@@ -185,34 +157,27 @@ class App extends React.Component {
           title: '',
           author: '',
           url: ''
-        },
-        notification: {
-          type: "success",
-          text: `a new blog '${this.state.newBlog.title}' by ${this.state.newBlog.author} added`
         }
       })
+
+      this.props.notify(
+        {
+          text: `a new blog '${newBlog.title}' by ${newBlog.author} added`,
+          type: 'success'
+        }, 5
+      )
 
       // Hide blog form
       this.blogForm.toggleVisibility()
 
     } catch(exception) {
       // Show error message
-      this.setState({
-        notification: {
-          type: "error",
-          text: "There was an error with submitting the new blog"
-        }
-      })
-    } finally {
-      // Hide message in 5 seconds
-      setTimeout(() => {
-        this.setState({
-          notification: {
-            type: "",
-            text: ""
-          }
-        })
-      }, 5000)
+      this.props.notify(
+        {
+          text: `There was an error with submitting the new blog`,
+          type: 'error'
+        }, 5
+      )
     }
   }
 
@@ -286,4 +251,14 @@ class App extends React.Component {
   }
 }
 
-export default App;
+const mapDispatchToProps =
+  {
+    notify
+  }
+
+const ConnectedApp = connect(
+  null,
+  mapDispatchToProps
+)(App)
+
+export default ConnectedApp;
